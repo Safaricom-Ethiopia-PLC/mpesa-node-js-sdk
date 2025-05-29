@@ -1,0 +1,230 @@
+---
+title: MPesa Instance
+description: Detailed reference for the MPesa Instance, its core methods, authentication handling, payload types, response types, and expected errors.
+---
+
+# MPesa Class
+
+The `MPesa` class is the primary interface for interacting with the M-Pesa API. It provides core methods to handle authentication, STK Push, B2C payments, and URL registration while abstracting the complexity of API calls.
+
+---
+
+## Singleton Behavior
+
+The `MPesa` class follows the singleton design pattern to ensure only one instance is created during the application's lifecycle. This avoids redundant configurations and centralizes API interactions.
+
+### Example
+```typescript
+import { MPesa } from 'mpesa-sdk';
+
+const mpesa = MPesa.getInstance({
+    environment: 'sandbox',
+    apiKey: 'your-api-key',
+    secretKey: 'your-secret-key',
+    retries: 3,
+    logLevel: 'informational',
+});
+
+const sameMpesa = MPesa.getInstance(); // Returns the same instance as above
+```
+
+If you call `MPesa.getInstance()` without passing configuration after the first call, it will reuse the previously initialized instance.
+
+---
+
+## Core Methods
+
+### `authenticate`
+Handles automatic token generation and caching. You don't need to call this method directly as it is invoked automatically before making API requests.
+
+#### Example
+```typescript
+await mpesa.authenticate(); // Generates a new token
+```
+
+#### Errors
+- `AuthenticationError`: Thrown if token generation fails.
+
+---
+
+### `stkPush`
+Initiates a payment request to a customer's phone using the M-Pesa STK Push API.
+
+#### Parameters
+- **Payload**: An object of type `StkPushPayloadType`.
+
+#### Example
+```typescript
+const payload = {
+    BusinessShortCode: '123456',
+    Password: 'base64-encoded-password',
+    Timestamp: '20250101120000',
+    TransactionType: 'CustomerPayBillOnline',
+    Amount: 100,
+    PartyA: '254700123456',
+    PartyB: '123456',
+    PhoneNumber: '254700123456',
+    CallBackURL: 'https://your-callback-url.com',
+    AccountReference: 'Ref123',
+    TransactionDesc: 'Payment Description',
+};
+
+try {
+    const response = await mpesa.stkPush(payload);
+    console.log('STK Push Response:', response);
+} catch (error) {
+    console.error('STK Push failed:', error);
+}
+```
+
+#### Expected Response
+- **Type**: `StkPushResponseType`
+- **Structure**:
+```typescript
+{
+    MerchantRequestID: string;
+    CheckoutRequestID: string;
+    ResponseCode: string;
+    ResponseDescription: string;
+    CustomerMessage: string;
+}
+```
+
+#### Errors
+- `StkPushError`: Thrown if the API returns an error response.
+
+---
+
+### `b2cPayment`
+Processes business-to-customer payments.
+
+#### Parameters
+- **Payload**: An object of type `B2CPayloadType`.
+
+#### Example
+```typescript
+const payload = {
+    InitiatorName: 'testapi',
+    SecurityCredential: 'encrypted-password',
+    CommandID: 'BusinessPayment',
+    Amount: 500,
+    PartyA: '101010',
+    PartyB: '254700123456',
+    Remarks: 'Payment for services',
+    QueueTimeOutURL: 'https://your-domain.com/b2c/timeout',
+    ResultURL: 'https://your-domain.com/b2c/result',
+    Occassion: 'Bonus',
+};
+
+try {
+    const response = await mpesa.b2cPayment(payload);
+    console.log('B2C Payment Response:', response);
+} catch (error) {
+    console.error('B2C Payment failed:', error);
+}
+```
+
+#### Expected Response
+- **Type**: `B2CResponseType`
+- **Structure**:
+```typescript
+{
+    ConversationID: string;
+    OriginatorConversationID: string;
+    ResponseCode: string;
+    ResponseDescription: string;
+}
+```
+
+#### Errors
+- `B2CError`: Thrown if the API returns an error response.
+
+---
+
+### `registerC2BUrl`
+Registers validation and confirmation URLs for receiving payment notifications.
+
+#### Parameters
+- **Payload**: An object of type `RegisterUrlPayloadType`.
+
+#### Example
+```typescript
+const payload = {
+    ShortCode: '123456',
+    ResponseType: 'Completed',
+    CommandID: 'RegisterURL',
+    ConfirmationURL: 'https://your-domain.com/c2b/confirmation',
+    ValidationURL: 'https://your-domain.com/c2b/validation',
+};
+
+try {
+    const response = await mpesa.registerC2BUrl(payload);
+    console.log('C2B URL Registration Response:', response);
+} catch (error) {
+    console.error('C2B URL registration failed:', error);
+}
+```
+
+#### Expected Response
+- **Type**: `RegisterUrlResponseType`
+- **Structure**:
+```typescript
+{
+    responseCode: number;
+    responseMessage: string;
+    customerMessage: string;
+    timestamp: string;
+}
+```
+
+#### Errors
+- `RegisterUrlError`: Thrown if the API returns an error response.
+
+---
+
+## How Authentication is Handled Automatically
+
+The `MPesa` class uses automatic token management:
+- **Token Caching**: The `authenticate` method is invoked automatically before any API call if no valid token exists.
+- **Token Expiry**: Tokens are cached and reused until they expire.
+- **Error Handling**: If token generation fails, an `AuthenticationError` is thrown.
+
+You don’t need to call `authenticate` manually unless testing.
+
+---
+
+## Payload and Response Types
+
+### **Payload Types**
+- `StkPushPayloadType`
+- `B2CPayloadType`
+- `RegisterUrlPayloadType`
+
+### **Response Types**
+- `StkPushResponseType`
+- `B2CResponseType`
+- `RegisterUrlResponseType`
+
+Refer to the detailed documentation of each method for their structures.
+
+---
+
+## Expected Errors
+
+### Custom Errors
+- `AuthenticationError`: Thrown when token generation fails.
+- `StkPushError`: Thrown for errors in the STK Push API.
+- `B2CError`: Thrown for errors in the B2C API.
+- `RegisterUrlError`: Thrown for errors in the Register URL API.
+
+### Example of Error Handling
+```typescript
+try {
+    const response = await mpesa.stkPush(payload);
+} catch (error) {
+    if (error.name === 'StkPushError') {
+        console.error('STK Push failed:', error.getDetails());
+    } else {
+        console.error('Unexpected error:', error);
+    }
+}

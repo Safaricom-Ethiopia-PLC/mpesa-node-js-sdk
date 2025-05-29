@@ -1,0 +1,203 @@
+---
+title: Logging
+description: Detailed reference for the Logger class, its methods, log levels, and how to use it effectively for debugging and monitoring.
+---
+
+# Logger Class
+
+The `Logger` class provides a standardized logging utility for the SDK. It supports multiple log levels, JSON-formatted outputs, and contextual logging to aid in debugging and monitoring.
+
+---
+
+## Log Levels
+
+The `Logger` class supports the following log levels based on their severity:
+
+| Level         | Value | Description                                      |
+|---------------|-------|--------------------------------------------------|
+| **Emergency** | 0     | System is unusable.                             |
+| **Alert**     | 1     | Action must be taken immediately.               |
+| **Critical**  | 2     | Critical conditions.                            |
+| **Error**     | 3     | Error conditions.                               |
+| **Warning**   | 4     | Warning conditions.                             |
+| **Notice**    | 5     | Normal but significant conditions.              |
+| **Info**      | 6     | Informational messages.                         |
+| **Debug**     | 7     | Debug-level messages for detailed development.  |
+
+The minimum log level can be configured when creating the `Logger` instance. Only messages at or above the configured log level will be logged.
+
+---
+
+## Methods
+
+### `logEmergency`
+Logs a message at the **Emergency** level.
+
+#### Parameters
+- `message` (string): The message to log.
+- `context?` (object): Optional additional context.
+
+#### Example
+```typescript
+logger.logEmergency('System failure: Disk not found', { diskId: 'disk123' });
+```
+
+---
+
+### `logAlert`
+Logs a message at the **Alert** level.
+
+#### Parameters
+- `message` (string): The message to log.
+- `context?` (object): Optional additional context.
+
+#### Example
+```typescript
+logger.logAlert('Database connection lost', { database: 'userDB' });
+```
+
+---
+
+### `logCritical`
+Logs a message at the **Critical** level.
+
+#### Parameters
+- `message` (string): The message to log.
+- `context?` (object): Optional additional context.
+
+#### Example
+```typescript
+logger.logCritical('API rate limit exceeded', { endpoint: '/v1/token' });
+```
+
+---
+
+### `logError`
+Logs a message at the **Error** level.
+
+#### Parameters
+- `message` (string): The message to log.
+- `context?` (object): Optional additional context.
+
+#### Example
+```typescript
+logger.logError('Authentication failed', { errorCode: '401', userId: 'user123' });
+```
+
+---
+
+### `logWarning`
+Logs a message at the **Warning** level.
+
+#### Parameters
+- `message` (string): The message to log.
+- `context?` (object): Optional additional context.
+
+#### Example
+```typescript
+logger.logWarning('Using deprecated API endpoint', { endpoint: '/v1/old-endpoint' });
+```
+
+---
+
+### `logNotice`
+Logs a message at the **Notice** level.
+
+#### Parameters
+- `message` (string): The message to log.
+- `context?` (object): Optional additional context.
+
+#### Example
+```typescript
+logger.logNotice('Token about to expire', { expiresIn: '30 seconds' });
+```
+
+---
+
+### `logInfo`
+Logs a message at the **Info** level.
+
+#### Parameters
+- `message` (string): The message to log.
+- `context?` (object): Optional additional context.
+
+#### Example
+```typescript
+logger.logInfo('SDK initialized successfully');
+```
+
+---
+
+### `logDebug`
+Logs a message at the **Debug** level.
+
+#### Parameters
+- `message` (string): The message to log.
+- `context?` (object): Optional additional context.
+
+#### Example
+```typescript
+logger.logDebug('Debugging API request', { payload: { key: 'value' } });
+```
+
+---
+
+## Configuration
+
+The `Logger` instance can be configured with a minimum log level to control which messages are logged.
+
+### Example
+```typescript
+import { Logger, LogLevel } from './Logger';
+
+const logger = new Logger(LogLevel.Warning); // Only logs Warning, Error, Critical, etc.
+```
+
+---
+
+## JSON Log Format
+
+All logs are output in JSON format for easy parsing and integration with log management systems.
+
+### Example
+```json
+{
+    "timestamp": "2025-01-02T12:00:00Z",
+    "level": "error",
+    "message": "Authentication failed",
+    "context": {
+        "errorCode": "401",
+        "userId": "user123"
+    }
+}
+```
+
+---
+
+## Usage in the SDK
+
+The `Logger` is used throughout the SDK to log critical events, errors, and debugging information. For example:
+
+### Authentication Logging
+```typescript
+logger.logInfo('Attempting to authenticate');
+try {
+    await mpesa.authenticate();
+    logger.logInfo('Authentication successful');
+} catch (error) {
+    logger.logError('Authentication failed', { error });
+}
+```
+
+### API Request/Response Logging
+```typescript
+logger.logDebug('Sending API request', { endpoint: '/v1/token', payload });
+const response = await apiClient.request(payload);
+logger.logDebug('Received API response', { response });
+```
+
+---
+
+## Summary
+
+The `Logger` class provides a flexible and standardized way to manage logging across the SDK. By supporting multiple log levels and JSON formatting, it ensures logs are both readable and easily integrated with external monitoring tools.

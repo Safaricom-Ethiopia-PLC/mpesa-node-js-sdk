@@ -1,0 +1,95 @@
+---
+title: Installation
+description: Learn how to configure m-pesa in your project.
+---
+
+<Steps>
+
+<Step>
+
+## Prerequisites
+
+Before installing the SDK, ensure the following:
+
+- **Node.js v22.8.0 or later** is installed on your system.
+- You have an **M-Pesa Developer Account**.  
+  Register at [M-Pesa Developer Portal](https://developer.safaricom.et).
+
+<Callout type="info">
+Make sure to obtain your `consumerKey` and `consumerSecret` from the M-Pesa Developer Portal for authentication.
+</Callout>
+</Step>
+
+<Step>
+## Install the Package
+
+Use your preferred package manager to install the M-Pesa SDK:
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+  <Tab value="npm">
+    ```bash
+    npm install @johntad/m-pesa
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add @johntad/m-pesa
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add @johntad/m-pesa
+    ```
+  </Tab>
+</Tabs>
+</Step>
+
+<Step>
+## Set Up the Environment
+
+To configure the SDK, create a `.env` file in your project root and add the following environment variables:
+
+```env title=.env
+MPESA_CONSUMER_KEY=your-consumer-key
+MPESA_CONSUMER_SECRET=your-consumer-secret
+MPESA_ENVIRONMENT=sandbox
+```
+
+<Callout type="tip">
+Set `MPESA_ENVIRONMENT` to `production` when deploying to live environments.
+</Callout>
+</Step>
+
+<Step>
+## Basic Configuration
+
+Create an **M-Pesa instance** in your project by importing and configuring the SDK:
+
+```typescript title=mpesa.ts
+import { Mpesa } from 'm-pesa';
+
+const mpesa = new Mpesa({
+  apiKey: process.env.MPESA_CONSUMER_KEY,
+  secretKey: process.env.MPESA_CONSUMER_SECRET,
+  environment: process.env.MPESA_ENVIRONMENT,
+});
+
+// Example: Check account balance
+mpesa.accountBalance({
+  shortCode: '123456',
+  callbackUrl: 'https://yourcallback.url',
+}).then(response => console.log(response))
+  .catch(error => console.error(error));
+```
+
+<Callout type="warning">
+Ensure your environment variables are correctly set to avoid authentication issues.
+</Callout>
+</Step>
+
+<Step>
+## 🎉 That's it!
+That's it! You're now ready to integrate m-pesa in your application. Continue to [basic usage](/docs/getting-started/basic-usage) to learn how to use the `MPesa` functionalities.
+</Step>
+
+</Steps>

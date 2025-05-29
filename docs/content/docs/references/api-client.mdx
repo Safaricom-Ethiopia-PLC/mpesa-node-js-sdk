@@ -1,0 +1,177 @@
+---
+title: APIClient
+description: More about the APIClient class; includes request handling, retries, pagination, error handling, and its integration with the SDK.
+---
+
+# APIClient Class
+
+The `APIClient` class is a low-level HTTP client used by the SDK to interact with the M-Pesa API. It abstracts common tasks like request handling, retries, pagination, and error handling.
+
+---
+
+## Core Features
+
+1. **Request Handling**:
+   - Supports common HTTP methods: `GET`, `POST`, `PUT`, `DELETE`.
+   - Simplifies configuration of headers, query parameters, and request payloads.
+
+2. **Retries**:
+   - Implements retry logic for transient failures (e.g., network errors).
+   - Configurable retry attempts.
+
+3. **Pagination**:
+   - Provides helper methods to handle paginated API responses seamlessly.
+
+4. **Error Handling**:
+   - Centralized error handling for API responses.
+   - Maps HTTP errors to meaningful SDK-specific exceptions.
+
+---
+
+## Constructor
+
+### Example
+```typescript
+const apiClient = new APIClient({
+    baseURL: 'https://apisandbox.safaricom.et',
+    timeout: 5000,
+    retries: 3,
+});
+```
+
+### Parameters
+- **`baseURL`**: The base URL for all API requests.
+- **`timeout`**: (Optional) Timeout for requests in milliseconds (default: `5000`).
+- **`retries`**: (Optional) Number of retry attempts for transient failures (default: `3`).
+
+---
+
+## Methods
+
+### `requestWithRetry`
+Executes an HTTP request with automatic retry logic.
+
+#### Parameters
+- **`method`**: HTTP method (`GET`, `POST`, etc.).
+- **`url`**: The endpoint URL (relative to `baseURL`).
+- **`data`**: (Optional) Request payload.
+- **`config`**: (Optional) Additional Axios configuration.
+
+#### Returns
+- **Type**: `Promise<AxiosResponse<T>>`
+
+#### Example
+```typescript
+const response = await apiClient.requestWithRetry('POST', '/v1/token/generate', payload, {
+    headers: { Authorization: 'Bearer <token>' },
+});
+console.log(response.data);
+```
+
+---
+
+### `fetchPaginated`
+Fetches data from a paginated API.
+
+#### Parameters
+- **`url`**: The endpoint URL.
+- **`config`**: (Optional) Additional Axios configuration.
+- **`paginationKey`**: (Optional) Key for the next page URL (default: `'next'`).
+- **`resultsKey`**: (Optional) Key for the results array in the response (default: `'data'`).
+
+#### Returns
+- **Type**: `Promise<T[]>`
+
+#### Example
+```typescript
+const allResults = await apiClient.fetchPaginated('/v1/resources', undefined, 'nextPage', 'items');
+console.log(allResults);
+```
+
+---
+
+### `handleError`
+Centralized error handler for API responses.
+
+#### Parameters
+- **`error`**: The error object (e.g., Axios error).
+
+#### Throws
+- **SDK-specific errors**: Maps API errors to custom exceptions (e.g., `AuthenticationError`, `ApiError`).
+
+#### Example
+This method is used internally by the `APIClient` to handle errors from requests.
+
+---
+
+## Error Handling
+
+The `APIClient` class uses the `handleError` method to map API errors to meaningful exceptions. Common error scenarios include:
+
+1. **Authentication Errors**:
+   - Thrown when the access token is invalid or expired.
+   - Example: `AuthenticationError`.
+
+2. **API Errors**:
+   - Generic errors returned by the M-Pesa API.
+   - Example: `ApiError`.
+
+3. **Network Errors**:
+   - Thrown for connection issues or timeouts.
+   - Example: `NetworkError`.
+
+### Example
+```typescript
+try {
+    const response = await apiClient.requestWithRetry('GET', '/v1/resources');
+} catch (error) {
+    if (error instanceof ApiError) {
+        console.error('API Error:', error.message);
+    } else {
+        console.error('Unexpected Error:', error);
+    }
+}
+```
+
+---
+
+## Retry Logic
+
+The `APIClient` implements exponential backoff for retries. Each retry waits longer than the previous attempt to reduce load on the server.
+
+#### Example
+```typescript
+const response = await apiClient.requestWithRetry('POST', '/v1/token/generate', payload, {
+    retries: 3, // Retry up to 3 times
+});
+```
+
+---
+
+## Pagination
+
+The `fetchPaginated` method simplifies handling paginated APIs by automatically traversing pages and aggregating results.
+
+#### Example
+```typescript
+const items = await apiClient.fetchPaginated('/v1/items');
+console.log('All items:', items);
+```
+
+---
+
+## Integration with SDK
+
+The `APIClient` is used internally by the `MPesa` class to make all API requests. It ensures consistent error handling, retries, and logging across all SDK operations.
+
+---
+
+## Summary
+
+The `APIClient` class is a robust, reusable HTTP client that handles:
+
+- Request handling and retries.
+- Pagination support.
+- Centralized error handling.
+
+It simplifies communication with the M-Pesa API and ensures reliability in network interactions.

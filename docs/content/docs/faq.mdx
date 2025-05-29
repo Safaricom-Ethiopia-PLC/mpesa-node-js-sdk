@@ -1,0 +1,56 @@
+---
+title: FAQ
+description: Frequently asked questions about the M-Pesa SDK.
+---
+
+# FAQ
+
+<Accordions>
+
+<Accordion title="What is the purpose of this SDK?" id="purpose">
+The M-Pesa SDK simplifies integration with M-Pesa APIs by abstracting authentication, API requests, error handling, and other repetitive tasks.
+</Accordion>
+
+<Accordion title="How do I initialize the SDK?" id="initialize">
+To initialize the SDK, use the `MPesa.getInstance` method and pass the required configuration:
+
+```typescript
+const mpesa = MPesa.getInstance({
+    environment: 'sandbox',
+    apiKey: 'your-api-key',
+    secretKey: 'your-secret-key',
+});
+```
+</Accordion>
+
+<Accordion title="Does the SDK automatically handle authentication?" id="authentication">
+Yes, the SDK automatically generates and caches authentication tokens. You don’t need to call the `authenticate` method manually unless testing.
+</Accordion>
+
+<Accordion title="What happens if an API call fails?" id="api-errors">
+If an API call fails, the SDK throws a structured custom error (e.g., `StkPushError`, `AuthenticationError`). These errors include descriptive messages and details for debugging.
+</Accordion>
+
+<Accordion title="Can I customize the logging level?" id="logging">
+Yes, you can configure the logging level during SDK initialization by setting the `logLevel` property in the configuration object:
+
+```typescript
+const mpesa = MPesa.getInstance({
+    logLevel: 'debug',
+});
+```
+</Accordion>
+
+<Accordion title="How does the SDK handle retries?" id="retries">
+The SDK automatically retries failed requests up to the configured number of attempts. Retry logic uses exponential backoff to minimize server strain.
+</Accordion>
+
+<Accordion title="Where can I find examples of usage?" id="examples">
+Refer to the [Basic Usage](/docs/getting-started/basic-usage) section of this documentation for step-by-step examples of how to use different functionalities of the SDK.
+</Accordion>
+
+<Accordion title="Can I use this SDK in production?" id="production">
+Yes, the SDK is designed to work in both `sandbox` and `production` environments. Ensure you switch the `environment` configuration to `production` and use your live credentials.
+</Accordion>
+
+</Accordions>

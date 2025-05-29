@@ -1,0 +1,83 @@
+---
+title: Errors
+description: Detailed reference for the MpesaError base class and custom errors that extend it.
+---
+
+# Errors
+
+The SDK includes a centralized error-handling system based on the `MpesaError` base class. Custom errors extend this base class to represent specific error scenarios, ensuring meaningful and structured exceptions.
+
+---
+
+## `MpesaError`
+
+The base class for all custom errors in the SDK.
+
+### Properties
+- **`message`**: A descriptive error message.
+- **`name`**: The type of the error (e.g., `MpesaError`, `AuthenticationError`).
+
+### Example
+```typescript
+throw new MpesaError('An unknown error occurred');
+```
+
+---
+
+## Custom Errors
+
+### `AuthenticationError`
+Represents errors related to authentication failures, such as invalid API keys or expired tokens.
+
+#### Example Scenario
+- Token generation failed due to incorrect credentials.
+
+---
+
+### `ApiError`
+Represents generic errors returned by the M-Pesa API, such as invalid input or server issues.
+
+#### Example Scenario
+- The API responded with a `400 Bad Request` status.
+
+---
+
+### `NetworkError`
+Represents network-related issues, such as timeouts or unreachable endpoints.
+
+#### Example Scenario
+- The server did not respond within the specified timeout period.
+
+---
+
+### `StkPushError`
+Represents errors specific to the STK Push process.
+
+#### Example Scenario
+- The payment request failed due to an invalid phone number.
+
+---
+
+### `B2CError`
+Represents errors specific to B2C (Business to Customer) payments.
+
+#### Example Scenario
+- The payment request failed due to insufficient funds.
+
+---
+
+### `RegisterUrlError`
+Represents errors specific to the Register URL API.
+
+#### Example Scenario
+- URL registration failed due to an already registered shortcode.
+
+---
+
+## Summary
+
+The SDK's error-handling system uses structured exceptions to:
+- Provide clear feedback to developers.
+- Allow targeted error handling based on error types.
+
+Always check the error type when catching exceptions to handle specific scenarios appropriately.

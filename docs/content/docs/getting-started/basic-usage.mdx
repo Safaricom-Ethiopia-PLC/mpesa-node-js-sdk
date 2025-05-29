@@ -1,0 +1,154 @@
+---
+title: Basic Usage
+description: This page will walk you through the basic functionalities provided by the SDK.
+---
+
+
+## Import and Initialize the SDK
+
+To start using the SDK, you need to import and configure it with your credentials:
+
+```typescript
+import { MPesa } from 'mpesa-sdk';
+
+const mpesa = MPesa.getInstance({
+    environment: 'sandbox', // Use 'production' for live environment
+    apiKey: 'your-api-key',
+    secretKey: 'your-secret-key',
+    logLevel: 'informational', // Optional: Logging level
+    retries: 3,                // Optional: Number of retries for API calls
+});
+```
+
+---
+
+## Authentication
+
+The SDK handles authentication for you, so you don’t need to manually request an access token. However, you can test the authentication functionality if needed:
+
+```typescript
+try {
+    await mpesa.authenticate();
+    console.log('Authentication successful');
+} catch (error) {
+    console.error('Authentication failed:', error);
+}
+```
+
+---
+
+## Sending STK Push (Customer Payment)
+
+The STK Push API allows you to request payments from customers. Here’s how to use it:
+
+```typescript
+const payload = {
+    BusinessShortCode: '123456',
+    Password: 'base64-encoded-password',
+    Timestamp: '20250101120000',
+    TransactionType: 'CustomerPayBillOnline',
+    Amount: 100,
+    PartyA: '254700123456',
+    PartyB: '123456',
+    PhoneNumber: '254700123456',
+    CallBackURL: 'https://your-callback-url.com',
+    AccountReference: 'Ref123',
+    TransactionDesc: 'Payment Description',
+};
+
+try {
+    const response = await mpesa.stkPush(payload);
+    console.log('STK Push Response:', response.toString());
+} catch (error) {
+    console.error('Error during STK Push:', error);
+}
+```
+
+---
+
+## Registering C2B URLs
+
+Register URLs to receive validation and confirmation notifications for customer payments:
+
+```typescript
+const payload = {
+    ShortCode: '123456',
+    ResponseType: 'Completed',
+    CommandID: 'RegisterURL',
+    ConfirmationURL: 'https://your-domain.com/c2b/confirmation',
+    ValidationURL: 'https://your-domain.com/c2b/validation',
+};
+
+try {
+    const response = await mpesa.registerC2BUrl(payload);
+    console.log('C2B URL Registration Response:', response.toString());
+} catch (error) {
+    console.error('Error during C2B URL registration:', error);
+}
+```
+
+---
+
+## B2C Payments (Business to Customer)
+
+Send payments to customers using the B2C API:
+
+```typescript
+const payload = {
+    InitiatorName: 'testapi',
+    SecurityCredential: 'encrypted-password',
+    CommandID: 'BusinessPayment',
+    Amount: 500,
+    PartyA: '101010',
+    PartyB: '254700123456',
+    Remarks: 'Payment for services',
+    QueueTimeOutURL: 'https://your-domain.com/b2c/timeout',
+    ResultURL: 'https://your-domain.com/b2c/result',
+    Occassion: 'Bonus',
+};
+
+try {
+    const response = await mpesa.b2cPayment(payload);
+    console.log('B2C Payment Response:', response.toString());
+} catch (error) {
+    console.error('Error during B2C Payment:', error);
+}
+```
+
+---
+
+## Logging
+
+The SDK provides configurable logging to help you debug and monitor your application:
+
+```typescript
+mpesa.logger.logInfo('This is an informational log');
+mpesa.logger.logDebug('Debugging details:', { key: 'value' });
+mpesa.logger.logError('An error occurred');
+```
+
+---
+
+## Error Handling
+
+All API calls throw custom errors that you can handle appropriately:
+
+```typescript
+try {
+    const response = await mpesa.stkPush(payload);
+} catch (error) {
+    if (error.name === 'StkPushError') {
+        console.error('STK Push failed:', error.getDetails());
+    } else {
+        console.error('Unexpected error:', error);
+    }
+}
+```
+
+---
+
+## Next Steps
+
+Explore the [references](http://localhost:3000/docs/references/mpesa) section for advanced functionalities of the SDK 
+
+For additional support, visit [the github discussion](#).
