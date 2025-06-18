@@ -1,5 +1,5 @@
 {
-  "name": "@johntad/m-pesa",
+  "name": "@safaricom-et/mpesa-node-js-sdk",
   "version": "1.0.0",
   "description": "A TypeScript SDK for integrating M-Pesa mobile payment services into applications, enabling seamless money transfers and transactions.",
   "main": "dist/index.js",
@@ -33,7 +33,7 @@
     "money",
     "nodejs"
   ],
-  "author": "John Tad",
+  "author": "MPESA Dev.",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.7.9"
