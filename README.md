@@ -1,6 +1,6 @@
 # [mpesa-node-js-sdk] M-Pesa SDK for NodeJS
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://mit-license.org/Safaricom-Ethiopia-PLC)
+[![npm version](https://img.shields.io/npm/v/@safaricom-et/mpesa-node-js-sdk.svg)](https://www.npmjs.com/package/@safaricom-et/mpesa-node-js-sdk) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://mit-license.org/Safaricom-Ethiopia-PLC)
 
 ## Overview
 
