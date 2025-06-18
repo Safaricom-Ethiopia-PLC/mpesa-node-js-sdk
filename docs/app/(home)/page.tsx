@@ -53,7 +53,7 @@ export default function HomePage() {
           Follow these steps to get started:
         </p>
         <ol className="mt-4 space-y-4 list-decimal text-left ml-6">
-          <li>Download or install the SDK using <code>npm install @johntad/mpesa-sdk</code>.</li>
+          <li>Download or install the SDK using <code>npm install @safaricom-et/mpesa-node-js-sdk</code>.</li>
           <li>Configure the SDK with your credentials and environment.</li>
           <li>Refer to our <Link href="/docs" className="text-blue-600 underline">Documentation</Link> for tutorials and examples.</li>
         </ol>
