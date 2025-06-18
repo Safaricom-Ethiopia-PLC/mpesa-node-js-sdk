@@ -29,19 +29,14 @@ Install the Package
 Use your preferred package manager to install the M-Pesa NodeJS SDK:
 
 ```bash
+# npm
 npm install @safaricom-et/mpesa-node-js-sdk
-```
 
-or
+# yarn
+yarn add @safaricom-et/mpesa-node-js-sdk
 
-```bash
-yarn install @safaricom-et/mpesa-node-js-sdk
-```
-
-or
-
-```bash
-pnpm install @safaricom-et/mpesa-node-js-sdk
+# pnpm
+pnpm add @safaricom-et/mpesa-node-js-sdk
 ```
 
 ## Configuration Guide
@@ -62,7 +57,7 @@ _Set MPESA_ENVIRONMENT to production when deploying to live environments._
 
 Create an instance in your project by importing and configuring the SDK:
 
-```nodejs
+```javascript
 import { Mpesa } from 'mpesa-node-js-sdk';
 
 const mpesa = new Mpesa({
@@ -72,11 +67,13 @@ const mpesa = new Mpesa({
 });
 
 // Example: Check account balance
-mpesa.accountBalance({
-  shortCode: '123456',
-  callbackUrl: 'https://yourcallback.url',
-}).then(response => console.log(response))
-  .catch(error => console.error(error));
+mpesa
+  .accountBalance({
+    shortCode: '123456',
+    callbackUrl: 'https://yourcallback.url',
+  })
+  .then((response) => console.log(response))
+  .catch((error) => console.error(error));
 ```
 
 ### _Getting Started_
@@ -95,15 +92,15 @@ mpesa.accountBalance({
 
   Example
 
-  ```nodejs
+  ```javascript
   import { MPesa } from 'mpesa-node-js-sdk';
 
   const mpesa = MPesa.getInstance({
-      environment: 'sandbox',
-      apiKey: 'your-api-key',
-      secretKey: 'your-secret-key',
-      retries: 3,
-      logLevel: 'informational',
+    environment: 'sandbox',
+    apiKey: 'your-api-key',
+    secretKey: 'your-secret-key',
+    retries: 3,
+    logLevel: 'informational',
   });
   ```
 
@@ -118,13 +115,13 @@ Handles automatic token generation and caching. You don't need to call this meth
 
 **Example:**
 
-```nodejs
+```javascript
 await mpesa.authenticate(); // Generates a new token
 ```
 
 **Errors:**
 
-- AuthenticationError: _Thrown if token generation fails._
+- `AuthenticationError`: _Thrown if token generation fails._
 
 ### Step 2: STK Push Integration
 
@@ -136,26 +133,26 @@ Initiates a payment request to a customer's phone using the M-Pesa STK Push API.
 
 **Example:**
 
-```nodejs
+```javascript
 const payload = {
-    BusinessShortCode: '123456',
-    Password: 'base64-encoded-password',
-    Timestamp: '20250101120000',
-    TransactionType: 'CustomerPayBillOnline',
-    Amount: 100,
-    PartyA: '254700123456',
-    PartyB: '123456',
-    PhoneNumber: '254700123456',
-    CallBackURL: 'https://your-callback-url.com',
-    AccountReference: 'Ref123',
-    TransactionDesc: 'Payment Description',
+  BusinessShortCode: '123456',
+  Password: 'base64-encoded-password',
+  Timestamp: '20250101120000',
+  TransactionType: 'CustomerPayBillOnline',
+  Amount: 100,
+  PartyA: '254700123456',
+  PartyB: '123456',
+  PhoneNumber: '254700123456',
+  CallBackURL: 'https://your-callback-url.com',
+  AccountReference: 'Ref123',
+  TransactionDesc: 'Payment Description',
 };
 
 try {
-    const response = await mpesa.stkPush(payload);
-    console.log('STK Push Response:', response);
+  const response = await mpesa.stkPush(payload);
+  console.log('STK Push Response:', response);
 } catch (error) {
-    console.error('STK Push failed:', error);
+  console.error('STK Push failed:', error);
 }
 ```
 
@@ -169,20 +166,20 @@ Registers validation and confirmation URLs for receiving payment notifications.
 
 **Example:**
 
-```nodejs
+```javascript
 const payload = {
-    ShortCode: '123456',
-    ResponseType: 'Completed',
-    CommandID: 'RegisterURL',
-    ConfirmationURL: 'https://your-domain.com/c2b/confirmation',
-    ValidationURL: 'https://your-domain.com/c2b/validation',
+  ShortCode: '123456',
+  ResponseType: 'Completed',
+  CommandID: 'RegisterURL',
+  ConfirmationURL: 'https://your-domain.com/c2b/confirmation',
+  ValidationURL: 'https://your-domain.com/c2b/validation',
 };
 
 try {
-    const response = await mpesa.registerC2BUrl(payload);
-    console.log('C2B URL Registration Response:', response);
+  const response = await mpesa.registerC2BUrl(payload);
+  console.log('C2B URL Registration Response:', response);
 } catch (error) {
-    console.error('C2B URL registration failed:', error);
+  console.error('C2B URL registration failed:', error);
 }
 ```
 
@@ -196,25 +193,25 @@ Processes business-to-customer payments.
 
 **Example:**
 
-```nodejs
+```javascript
 const payload = {
-    InitiatorName: 'testapi',
-    SecurityCredential: 'encrypted-password',
-    CommandID: 'BusinessPayment',
-    Amount: 500,
-    PartyA: '101010',
-    PartyB: '254700123456',
-    Remarks: 'Payment for services',
-    QueueTimeOutURL: 'https://your-domain.com/b2c/timeout',
-    ResultURL: 'https://your-domain.com/b2c/result',
-    Occassion: 'Bonus',
+  InitiatorName: 'testapi',
+  SecurityCredential: 'encrypted-password',
+  CommandID: 'BusinessPayment',
+  Amount: 500,
+  PartyA: '101010',
+  PartyB: '254700123456',
+  Remarks: 'Payment for services',
+  QueueTimeOutURL: 'https://your-domain.com/b2c/timeout',
+  ResultURL: 'https://your-domain.com/b2c/result',
+  Occassion: 'Bonus',
 };
 
 try {
-    const response = await mpesa.b2cPayment(payload);
-    console.log('B2C Payment Response:', response);
+  const response = await mpesa.b2cPayment(payload);
+  console.log('B2C Payment Response:', response);
 } catch (error) {
-    console.error('B2C Payment failed:', error);
+  console.error('B2C Payment failed:', error);
 }
 ```
 
